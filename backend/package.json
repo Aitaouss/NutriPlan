@@ -9,6 +9,7 @@
     "start": "node dist/server.js"
   },
   "dependencies": {
+    "@fastify/cors": "^8.5.0",
     "@fastify/jwt": "^8.0.1",
     "bcrypt": "^6.0.0",
     "better-sqlite3": "^12.2.0",

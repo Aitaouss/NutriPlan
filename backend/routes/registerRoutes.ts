@@ -6,6 +6,7 @@ export default async function RegisterRoutes(server: any) {
   server.post(
     "/signup",
     async (request: FastifyRequest, reply: FastifyReply) => {
+      console.log("Signup request received");
       if (!request.body) {
         return reply.status(400).send({ error: "Body required" });
       }
@@ -58,8 +59,12 @@ export default async function RegisterRoutes(server: any) {
       };
       const token = server.jwt.sign(userPayload);
       console.log("User signed up:", userPayload, "token:", token);
-      reply.header("Authorization", `Bearer ${token}`);
-      return;
+
+      return reply.status(201).send({
+        user: userPayload,
+        token: token,
+        message: "User registered successfully",
+      });
     }
   );
   server.post(
@@ -93,8 +98,12 @@ export default async function RegisterRoutes(server: any) {
       };
       const token = server.jwt.sign(userPayload);
       console.log("User logged in:", userPayload, "token:", token);
-      reply.header("Authorization", `Bearer ${token}`);
-      return;
+
+      return reply.status(200).send({
+        user: userPayload,
+        token: token,
+        message: "Login successful",
+      });
     }
   );
 }

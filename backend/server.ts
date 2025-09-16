@@ -1,6 +1,7 @@
 import Fastify, { FastifyInstance } from "fastify";
 import dotenv from "dotenv";
 import fastifyJwt from "@fastify/jwt";
+import fastifyCors from "@fastify/cors";
 import path from "path";
 import fs from "fs";
 import sqlite3 from "sqlite3";
@@ -43,6 +44,12 @@ if (!fs.existsSync(DB_PATH)) {
 // Register JWT plugin
 server.register(fastifyJwt, {
   secret: "supersecret",
+});
+
+// Register CORS plugin
+server.register(fastifyCors, {
+  origin: true, // Allow all origins for development
+  credentials: true,
 });
 
 const PORT = process.env.PORT || 9000;
