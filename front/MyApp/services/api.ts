@@ -1,7 +1,7 @@
 // API service for NutriPlan backend
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_BASE_URL = "https://57ae834a89e4.ngrok-free.app"; // Change this to your backend URL
+const API_BASE_URL = "https://348969df1460.ngrok-free.app"; // Change this to your backend URL
 
 // Constants for storage keys
 const TOKEN_KEY = "userToken";
@@ -116,6 +116,37 @@ export const generatePlan = async (
 
     return { data };
   } catch (error) {
+    return { error: "Network error. Please try again." };
+  }
+};
+
+// Get User Plan Route
+export const getUserPlan = async (
+  userId: number,
+  token: string | null
+): Promise<ApiResponse<any>> => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/plans?user_id=${userId}&latest=true`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "true",
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return { error: data.error || "Failed to get plan" };
+    }
+
+    return { data };
+  } catch (error) {
+    console.error("Get plan error:", error);
     return { error: "Network error. Please try again." };
   }
 };

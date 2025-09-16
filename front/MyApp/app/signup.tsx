@@ -9,6 +9,7 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, router } from "expo-router";
 import { registerUser, storeToken, storeUserData } from "../services/api";
@@ -77,129 +78,127 @@ export default function SignUpScreen() {
       setLoading(false);
     }
   };
-
   return (
-    <LinearGradient
-      colors={["#f8f9fa", "#e9ecef", "#dee2e6"]}
-      className="flex-1"
-    >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+    <SafeAreaView className="flex-1">
+      <LinearGradient
+        colors={["#f8f9fa", "#e9ecef", "#dee2e6"]}
         className="flex-1"
       >
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          <View className="flex-1 justify-center px-6 py-12">
-            {/* Header */}
-            <View className="items-center mb-8">
-              <Text className="text-4xl font-bold text-gray-800 mb-2">
-                Create Account
-              </Text>
-              <Text className="text-base text-gray-600 text-center">
-                Join NutriPlan and start your health journey
-              </Text>
-            </View>
-
-            {/* Form */}
-            <View className="space-y-4">
-              {/* Username Input */}
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-2">
-                  Username
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          className="flex-1"
+        >
+          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+            <View className=" flex-1 justify-center px-6 py-12">
+              {/* Header */}
+              <View className="items-center mb-8">
+                <Text className="text-4xl font-bold text-gray-800 mb-2">
+                  Create Account
                 </Text>
-                <TextInput
-                  className="bg-white/80 border border-gray-200 rounded-lg px-4 py-3 text-base"
-                  placeholder="Enter your username"
-                  placeholderTextColor="#9CA3AF"
-                  value={formData.username}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, username: text })
-                  }
-                  autoCapitalize="none"
-                />
-              </View>
-
-              {/* Email Input */}
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-2">
-                  Email
+                <Text className="text-base text-gray-600 text-center">
+                  Join NutriPlan and start your health journey
                 </Text>
-                <TextInput
-                  className="bg-white/80 border border-gray-200 rounded-lg px-4 py-3 text-base"
-                  placeholder="Enter your email"
-                  placeholderTextColor="#9CA3AF"
-                  value={formData.email}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, email: text })
-                  }
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
               </View>
-
-              {/* Password Input */}
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-2">
-                  Password
-                </Text>
-                <TextInput
-                  className="bg-white/80 border border-gray-200 rounded-lg px-4 py-3 text-base"
-                  placeholder="Enter your password"
-                  placeholderTextColor="#9CA3AF"
-                  value={formData.password}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, password: text })
-                  }
-                  secureTextEntry
-                />
-              </View>
-
-              {/* Confirm Password Input */}
-              <View>
-                <Text className="text-sm font-medium text-gray-700 mb-2">
-                  Confirm Password
-                </Text>
-                <TextInput
-                  className="bg-white/80 border border-gray-200 rounded-lg px-4 py-3 text-base"
-                  placeholder="Confirm your password"
-                  placeholderTextColor="#9CA3AF"
-                  value={formData.confirmPassword}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, confirmPassword: text })
-                  }
-                  secureTextEntry
-                />
-              </View>
-            </View>
-
-            {/* Sign Up Button */}
-            <TouchableOpacity
-              onPress={handleSignUp}
-              disabled={loading}
-              className={`mt-6 py-4 px-6 rounded-lg ${
-                loading ? "bg-gray-400" : "bg-red-600"
-              }`}
-            >
-              <Text className="text-white text-lg font-semibold text-center">
-                {loading ? "Creating Account..." : "Create Account"}
-              </Text>
-            </TouchableOpacity>
-
-            {/* Login Link */}
-            <View className="flex-row justify-center mt-6">
-              <Text className="text-gray-600 text-base">
-                Already have an account?{" "}
-              </Text>
-              <Link href="/login" asChild>
-                <TouchableOpacity>
-                  <Text className="text-red-600 text-base font-semibold">
-                    Log In
+              {/* Form */}
+              <View className="space-y-4">
+                {/* Username Input */}
+                <View>
+                  <Text className="text-sm font-medium text-gray-700 mb-2">
+                    Username
                   </Text>
-                </TouchableOpacity>
-              </Link>
+                  <TextInput
+                    className="bg-white/80 border border-gray-200 rounded-lg px-4 py-3 text-base"
+                    placeholder="Enter your username"
+                    placeholderTextColor="#9CA3AF"
+                    value={formData.username}
+                    onChangeText={(text) =>
+                      setFormData({ ...formData, username: text })
+                    }
+                    autoCapitalize="none"
+                  />
+                </View>
+
+                {/* Email Input */}
+                <View>
+                  <Text className="text-sm font-medium text-gray-700 mb-2">
+                    Email
+                  </Text>
+                  <TextInput
+                    className="bg-white/80 border border-gray-200 rounded-lg px-4 py-3 text-base"
+                    placeholder="Enter your email"
+                    placeholderTextColor="#9CA3AF"
+                    value={formData.email}
+                    onChangeText={(text) =>
+                      setFormData({ ...formData, email: text })
+                    }
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                </View>
+
+                {/* Password Input */}
+                <View>
+                  <Text className="text-sm font-medium text-gray-700 mb-2">
+                    Password
+                  </Text>
+                  <TextInput
+                    className="bg-white/80 border border-gray-200 rounded-lg px-4 py-3 text-base"
+                    placeholder="Enter your password"
+                    placeholderTextColor="#9CA3AF"
+                    value={formData.password}
+                    onChangeText={(text) =>
+                      setFormData({ ...formData, password: text })
+                    }
+                    secureTextEntry
+                  />
+                </View>
+
+                {/* Confirm Password Input */}
+                <View>
+                  <Text className="text-sm font-medium text-gray-700 mb-2">
+                    Confirm Password
+                  </Text>
+                  <TextInput
+                    className="bg-white/80 border border-gray-200 rounded-lg px-4 py-3 text-base"
+                    placeholder="Confirm your password"
+                    placeholderTextColor="#9CA3AF"
+                    value={formData.confirmPassword}
+                    onChangeText={(text) =>
+                      setFormData({ ...formData, confirmPassword: text })
+                    }
+                    secureTextEntry
+                  />
+                </View>
+              </View>
+              {/* Sign Up Button */}
+              <TouchableOpacity
+                onPress={handleSignUp}
+                disabled={loading}
+                className={`mt-6 py-4 px-6 rounded-lg ${
+                  loading ? "bg-gray-400" : "bg-red-600"
+                }`}
+              >
+                <Text className="text-white text-lg font-semibold text-center">
+                  {loading ? "Creating Account..." : "Create Account"}
+                </Text>
+              </TouchableOpacity>
+              {/* Login Link */}
+              <View className="flex-row justify-center mt-6">
+                <Text className="text-gray-600 text-base">
+                  Already have an account?
+                </Text>
+                <Link href="/login" asChild>
+                  <TouchableOpacity>
+                    <Text className="text-red-600 text-base font-semibold">
+                      Log In
+                    </Text>
+                  </TouchableOpacity>
+                </Link>
+              </View>
             </View>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </LinearGradient>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </LinearGradient>
+    </SafeAreaView>
   );
 }

@@ -10,6 +10,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import RegisterRoutes from "./routes/registerRoutes";
 import AdminRoutes from "./routes/admin";
 import OnboardingRoutes from "./routes/onboardingRoutes";
+import PlansRoutes from "./routes/PlanRoutes";
 
 dotenv.config();
 
@@ -68,6 +69,7 @@ const start = async (): Promise<void> => {
   server.register(RegisterRoutes);
   server.register(AdminRoutes);
   server.register(OnboardingRoutes);
+  server.register(PlansRoutes);
 
   try {
     await server.listen({ port: Number(PORT), host: "0.0.0.0" });
