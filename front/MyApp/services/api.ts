@@ -1,7 +1,7 @@
 // API service for NutriPlan backend
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_BASE_URL = "https://f44b2dd8facb.ngrok-free.app"; // Change this to your backend URL
+const API_BASE_URL = "https://8bcf4f6c26b0.ngrok-free.app"; // Change this to your backend URL
 
 // Constants for storage keys
 const TOKEN_KEY = "userToken";

@@ -527,7 +527,7 @@ export default function HomeScreen() {
               Macronutrients
             </Text>
 
-            <View className="space-y-4">
+            <View className="space-y-4 flex gap-3">
               <View className="flex-row justify-between items-center p-4 bg-green-50 rounded-xl">
                 <View>
                   <Text className="text-green-800 font-medium">Protein</Text>
