@@ -12,7 +12,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, router } from "expo-router";
-import { loginUser, storeToken, storeUserData } from "../services/api";
+import { loginUser } from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function LoginScreen() {
   const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ export default function LoginScreen() {
     password: "",
   });
   const [loading, setLoading] = useState(false);
+  const { setUser, setToken } = useAuth();
 
   const handleLogin = async () => {
     // Validation
@@ -38,12 +40,12 @@ export default function LoginScreen() {
       if (result.error) {
         Alert.alert("Login Failed", result.error);
       } else {
-        // Store the token and user data
+        // Store the token and user data using AuthProvider
         if (result.data && result.data.token) {
-          await storeToken(result.data.token);
+          await setToken(result.data.token);
         }
         if (result.data && result.data.user) {
-          await storeUserData(result.data.user);
+          await setUser(result.data.user);
         }
 
         Alert.alert("Success", "Welcome back!", [
@@ -119,7 +121,7 @@ export default function LoginScreen() {
               </View>
               {/* Forgot Password */}
               <TouchableOpacity className="mt-4">
-                <Text className="text-red-600 text-sm text-right">
+                <Text className="text-[#BB2121] text-sm text-right">
                   Forgot Password?
                 </Text>
               </TouchableOpacity>
@@ -128,7 +130,7 @@ export default function LoginScreen() {
                 onPress={handleLogin}
                 disabled={loading}
                 className={`mt-6 py-4 px-6 rounded-lg ${
-                  loading ? "bg-gray-400" : "bg-red-600"
+                  loading ? "bg-gray-400" : "bg-[#BB2121]"
                 }`}
               >
                 <Text className="text-white text-lg font-semibold text-center">
@@ -142,7 +144,7 @@ export default function LoginScreen() {
                 </Text>
                 <Link href="/signup" asChild>
                   <TouchableOpacity>
-                    <Text className="text-red-600 text-base font-semibold">
+                    <Text className="text-[#BB2121] text-base font-semibold">
                       Sign Up
                     </Text>
                   </TouchableOpacity>

@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import { clearStoredData } from "@/services/api";
 
 export default function HomeScreen() {
   return (
@@ -25,6 +26,14 @@ export default function HomeScreen() {
             </Text>
           </View>
         </View>
+        <TouchableOpacity
+          className="bg-red-600 p-4 rounded-full mx-6 mb-10 flex items-center"
+          onPress={async () => {
+            await clearStoredData();
+          }}
+        >
+          <Text className="text-white">Deconnect</Text>
+        </TouchableOpacity>
       </LinearGradient>
     </View>
   );

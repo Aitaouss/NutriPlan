@@ -12,7 +12,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, router } from "expo-router";
-import { registerUser, storeToken, storeUserData } from "../services/api";
+import { registerUser } from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function SignUpScreen() {
   const [formData, setFormData] = useState({
@@ -22,6 +23,7 @@ export default function SignUpScreen() {
     confirmPassword: "",
   });
   const [loading, setLoading] = useState(false);
+  const { setUser, setToken } = useAuth();
 
   const handleSignUp = async () => {
     // Validation
@@ -49,12 +51,12 @@ export default function SignUpScreen() {
       if (result.error) {
         Alert.alert("Registration Failed", result.error);
       } else {
-        // Store the token and user data
+        // Store the token and user data using AuthProvider
         if (result.data && result.data.token) {
-          await storeToken(result.data.token);
+          await setToken(result.data.token);
         }
         if (result.data && result.data.user) {
-          await storeUserData(result.data.user);
+          await setUser(result.data.user);
         }
 
         console.log("Registration successful:", result.data);
@@ -175,7 +177,7 @@ export default function SignUpScreen() {
                 onPress={handleSignUp}
                 disabled={loading}
                 className={`mt-6 py-4 px-6 rounded-lg ${
-                  loading ? "bg-gray-400" : "bg-red-600"
+                  loading ? "bg-gray-400" : "bg-[#BB2121]"
                 }`}
               >
                 <Text className="text-white text-lg font-semibold text-center">
@@ -189,7 +191,7 @@ export default function SignUpScreen() {
                 </Text>
                 <Link href="/login" asChild>
                   <TouchableOpacity>
-                    <Text className="text-red-600 text-base font-semibold">
+                    <Text className="text-[#BB2121] text-base font-semibold">
                       Log In
                     </Text>
                   </TouchableOpacity>

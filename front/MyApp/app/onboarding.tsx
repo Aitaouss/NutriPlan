@@ -209,7 +209,7 @@ export default function OnboardingScreen() {
                 onPress={handleSubmit}
                 disabled={loading}
                 className={`mt-8 py-4 px-6 rounded-lg ${
-                  loading ? "bg-gray-400" : "bg-red-600"
+                  loading ? "bg-gray-400" : "bg-[#BB2121]"
                 }`}
               >
                 <Text className="text-white text-lg font-semibold text-center">
