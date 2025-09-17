@@ -90,7 +90,7 @@ export const submitOnboarding = async (
 // 3. Generate Plan Route
 export const generatePlan = async (
   userId: number,
-  token?: string
+  token?: string | null
 ): Promise<ApiResponse<any>> => {
   try {
     const headers: any = {
@@ -147,6 +147,97 @@ export const getUserPlan = async (
     return { data };
   } catch (error) {
     console.error("Get plan error:", error);
+    return { error: "Network error. Please try again." };
+  }
+};
+
+// Get User Profile Route
+export const getUserProfile = async (
+  token: string | null
+): Promise<ApiResponse<any>> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/onboarding`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return { error: data.error || "Failed to get profile" };
+    }
+
+    return { data };
+  } catch (error) {
+    console.error("Get profile error:", error);
+    return { error: "Network error. Please try again." };
+  }
+};
+
+// Update User Plan Route
+export const updatePlan = async (
+  planId: number,
+  planData: any,
+  token: string | null
+): Promise<ApiResponse<any>> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/plans/${planId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "ngrok-skip-browser-warning": "true",
+      },
+      body: JSON.stringify({ plan_data: planData }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return { error: data.error || "Failed to update plan" };
+    }
+
+    return { data };
+  } catch (error) {
+    console.error("Update plan error:", error);
+    return { error: "Network error. Please try again." };
+  }
+};
+
+// Update User Profile Route
+export const updateProfile = async (
+  profileData: {
+    age: number;
+    height: number;
+    weight: number;
+    goal: string;
+  },
+  token: string | null
+): Promise<ApiResponse<any>> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/onboarding`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "ngrok-skip-browser-warning": "true",
+      },
+      body: JSON.stringify(profileData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return { error: data.error || "Failed to update profile" };
+    }
+
+    return { data };
+  } catch (error) {
+    console.error("Update profile error:", error);
     return { error: "Network error. Please try again." };
   }
 };
