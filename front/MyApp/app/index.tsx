@@ -1,30 +1,51 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, router } from "expo-router";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../contexts/AuthContext";
+import { getUserProfile } from "../services/api";
 
 export default function WelcomeScreen() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, token } = useAuth();
+  const [checkingOnboarding, setCheckingOnboarding] = useState(false);
 
   useEffect(() => {
     // Check authentication state when component mounts
-    if (!loading) {
-      if (isAuthenticated) {
-        // User is authenticated, redirect to main app
-        router.replace("/(tabs)");
-      }
-      // If not authenticated, stay on welcome screen
+    if (!loading && isAuthenticated && token) {
+      checkOnboardingStatus();
     }
-  }, [isAuthenticated, loading]);
+    // If not authenticated, stay on welcome screen
+  }, [isAuthenticated, loading, token]);
+
+  const checkOnboardingStatus = async () => {
+    try {
+      setCheckingOnboarding(true);
+
+      // Check if user has completed onboarding by checking profile
+      const response = await getUserProfile(token);
+
+      if (response.data && response.data.onboardingData) {
+        // User has completed onboarding, redirect to main app
+        router.replace("/(tabs)");
+      } else {
+        // User needs to complete onboarding
+        router.replace("/onboarding");
+      }
+    } catch (error) {
+      console.error("Error checking onboarding status:", error);
+      // On error, redirect to onboarding to be safe
+      router.replace("/onboarding");
+    } finally {
+      setCheckingOnboarding(false);
+    }
+  };
 
   const handleLogin = () => {
     router.push("/login");
   };
-
-  // Show loading while checking authentication
-  if (loading) {
+  // Show loading while checking authentication or onboarding
+  if (loading || checkingOnboarding) {
     return (
       <SafeAreaView className="flex-1">
         <LinearGradient
@@ -33,7 +54,9 @@ export default function WelcomeScreen() {
         >
           <View className="flex-1 justify-center items-center">
             <ActivityIndicator size="large" color="#BB2121" />
-            <Text className="text-gray-600 mt-4 text-lg">Loading...</Text>
+            <Text className="text-gray-600 mt-4 text-lg">
+              {checkingOnboarding ? "Checking profile..." : "Loading..."}
+            </Text>
           </View>
         </LinearGradient>
       </SafeAreaView>

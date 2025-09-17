@@ -64,7 +64,10 @@ export default function SignUpScreen() {
         Alert.alert("Success", "Account created successfully!", [
           {
             text: "OK",
-            onPress: () => router.push("/onboarding"),
+            onPress: () => {
+              // Navigate directly to onboarding without delay
+              router.replace("/onboarding");
+            },
           },
         ]);
       }

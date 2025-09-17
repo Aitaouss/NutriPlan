@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { HapticTab } from "@/components/haptic-tab";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -22,12 +23,9 @@ export default function TabLayout() {
           name="index"
           options={{
             title: "Home",
-          }}
-        />
-        <Tabs.Screen
-          name="ProfilePlan"
-          options={{
-            title: "Profile",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="home" size={size} color={color} />
+            ),
           }}
         />
       </Tabs>

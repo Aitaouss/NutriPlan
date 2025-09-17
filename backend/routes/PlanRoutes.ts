@@ -50,9 +50,7 @@ export default async function PlansRoutes(server: any) {
         // BMI = weight(kg) / (height(m))^2
         const heightInMeters = profile.height / 100; // assuming height in cm
         calculatedBMI = profile.weight / (heightInMeters * heightInMeters);
-      }
-
-      // Generate plan based on profile data
+      } // Generate plan based on profile data
       const generatedPlan = {
         goal: profile.goal,
         age: profile.age,
@@ -62,21 +60,60 @@ export default async function PlansRoutes(server: any) {
         calories_target: calculateCaloriesTarget(profile),
         macros: calculateMacros(profile),
         ...plan_data, // Allow additional plan data
-      }; // Insert plan into database
+      };
+      console.log("Generated plan:", generatedPlan);
+      console.log("About to insert plan for user:", user_id);
+
+      // Test database connection
+      try {
+        const testQuery = await server.db.get("SELECT 1 as test");
+        console.log("Database connection test:", testQuery);
+      } catch (dbError) {
+        console.error("Database connection error:", dbError);
+        throw new Error("Database connection failed");
+      } // Insert plan into database
       const result = await server.db.run(
         "INSERT INTO plans (user_id, plan_data, bmi) VALUES (?, ?, ?)",
         [user_id, JSON.stringify(generatedPlan), calculatedBMI]
       );
 
+      console.log("Database insertion result:", result);
+
       // Verify the insertion was successful
-      if (!result || !result.lastInsertRowid) {
-        throw new Error("Failed to insert plan into database");
+      // Different SQLite packages may have different result structures
+      const insertId =
+        result.lastInsertRowid || result.lastID || result.insertId;
+
+      if (!insertId) {
+        console.error("No insert ID returned from database");
+        console.error("Result object:", JSON.stringify(result, null, 2));
+
+        // Try to get the latest plan for this user as a fallback
+        const latestPlan = await server.db.get(
+          "SELECT * FROM plans WHERE user_id = ? ORDER BY created_at DESC LIMIT 1",
+          [user_id]
+        );
+
+        if (latestPlan) {
+          console.log("Found latest plan as fallback:", latestPlan);
+          return reply.status(201).send({
+            message: "Plan generated successfully",
+            plan: {
+              ...latestPlan,
+              plan_data: JSON.parse(latestPlan.plan_data),
+            },
+          });
+        }
+
+        throw new Error("Failed to insert plan into database - no insert ID");
       }
+
+      console.log("Plan inserted with ID:", insertId);
 
       // Get the created plan
       const createdPlan = await server.db.get(
         "SELECT * FROM plans WHERE id = ?",
-        [result.lastInsertRowid]
+        [insertId]
       );
 
       // Verify we got the plan back
@@ -95,7 +132,7 @@ export default async function PlansRoutes(server: any) {
       });
     } catch (error) {
       console.error("Error generating plan:", error);
-      return reply.status(500).send({ error: "Failed to generate plan" });
+      return reply.status(500).send({ error: "Failed to generate plan retry" });
     }
   });
 
@@ -127,16 +164,17 @@ export default async function PlansRoutes(server: any) {
           "SELECT * FROM plans WHERE user_id = ? ORDER BY created_at DESC";
         params = [user_id];
       }
-
       const plans =
         latest === "true"
           ? await server.db.get(query, params)
           : await server.db.all(query, params);
 
       if (!plans || (Array.isArray(plans) && plans.length === 0)) {
-        return reply
-          .status(404)
-          .send({ error: "No plans found for this user" });
+        // Return empty response instead of 404 for better UX
+        return reply.send({
+          message: "No plans found for this user",
+          plans: null,
+        });
       }
 
       // Parse plan_data JSON for each plan
@@ -237,7 +275,6 @@ function calculateCaloriesTarget(profile: any): number {
 
   // Apply activity factor (sedentary = 1.2)
   let calories = bmr * 1.2;
-
   // Adjust based on goal
   switch (profile.goal?.toLowerCase()) {
     case "lose weight":
@@ -247,6 +284,9 @@ function calculateCaloriesTarget(profile: any): number {
     case "gain weight":
     case "weight gain":
       calories += 500; // 500 calorie surplus
+      break;
+    case "build_muscle":
+      calories += 500; // 500 calorie surplus for muscle building
       break;
     default:
       // maintain weight
@@ -263,7 +303,6 @@ function calculateMacros(profile: any) {
   let proteinPercent = 0.25; // Default 25%
   let carbPercent = 0.45; // Default 45%
   let fatPercent = 0.3; // Default 30%
-
   switch (profile.goal?.toLowerCase()) {
     case "lose weight":
     case "weight loss":
@@ -277,6 +316,12 @@ function calculateMacros(profile: any) {
       // More carbs for energy and muscle building
       proteinPercent = 0.25; // 25% protein
       carbPercent = 0.5; // 50% carbs
+      fatPercent = 0.25; // 25% fat
+      break;
+    case "build_muscle":
+      // High protein for muscle building
+      proteinPercent = 0.35; // 35% protein
+      carbPercent = 0.4; // 40% carbs
       fatPercent = 0.25; // 25% fat
       break;
     default:

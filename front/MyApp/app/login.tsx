@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, router } from "expo-router";
-import { loginUser } from "../services/api";
+import { loginUser, getUserProfile } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function LoginScreen() {
@@ -48,12 +48,26 @@ export default function LoginScreen() {
           await setUser(result.data.user);
         }
 
-        Alert.alert("Success", "Welcome back!", [
-          {
-            text: "OK",
-            onPress: () => router.push("/(tabs)"),
-          },
-        ]);
+        // Check if user has completed onboarding
+        const profileResponse = await getUserProfile(result.data.token);
+
+        if (profileResponse.data && profileResponse.data.onboardingData) {
+          // User has completed onboarding, go to main app
+          Alert.alert("Success", "Welcome back!", [
+            {
+              text: "OK",
+              onPress: () => router.replace("/(tabs)"),
+            },
+          ]);
+        } else {
+          // User needs to complete onboarding
+          Alert.alert("Welcome back!", "Please complete your profile setup.", [
+            {
+              text: "OK",
+              onPress: () => router.replace("/onboarding"),
+            },
+          ]);
+        }
       }
     } catch (error) {
       Alert.alert("Error", "Something went wrong. Please try again.");

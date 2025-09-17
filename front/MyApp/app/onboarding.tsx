@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { getStoredToken, submitOnboarding } from "../services/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 const GOAL_OPTIONS = [
   { id: "lose_weight", label: "Lose Weight", emoji: "⬇️" },
@@ -23,6 +24,7 @@ const GOAL_OPTIONS = [
 ];
 
 export default function OnboardingScreen() {
+  const { refreshAuthState } = useAuth();
   const [formData, setFormData] = useState({
     age: "",
     height: "",
@@ -78,14 +80,18 @@ export default function OnboardingScreen() {
         },
         mockToken as string
       );
-
       if (result.error) {
         Alert.alert("Onboarding Failed", result.error);
       } else {
+        // Refresh auth state to ensure synchronization
+        await refreshAuthState();
         Alert.alert("Success", "Profile created successfully!", [
           {
             text: "Continue",
-            onPress: () => router.push("/(tabs)"),
+            onPress: () => {
+              // Replace instead of push to prevent going back to onboarding
+              router.replace("/(tabs)");
+            },
           },
         ]);
       }

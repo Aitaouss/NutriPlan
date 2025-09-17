@@ -110,8 +110,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.error("Error during logout:", error);
     }
   };
-
   const refreshAuthState = async () => {
+    console.log("AuthProvider - Refreshing auth state...");
     await checkAuthState();
   };
 

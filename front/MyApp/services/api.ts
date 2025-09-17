@@ -1,7 +1,7 @@
 // API service for NutriPlan backend
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_BASE_URL = "https://348969df1460.ngrok-free.app"; // Change this to your backend URL
+const API_BASE_URL = "https://f44b2dd8facb.ngrok-free.app"; // Change this to your backend URL
 
 // Constants for storage keys
 const TOKEN_KEY = "userToken";
@@ -93,6 +93,9 @@ export const generatePlan = async (
   token?: string | null
 ): Promise<ApiResponse<any>> => {
   try {
+    console.log("generatePlan - Starting request for user:", userId);
+    console.log("generatePlan - Token available:", token ? "Yes" : "No");
+
     const headers: any = {
       "Content-Type": "application/json",
       "ngrok-skip-browser-warning": "true", // Skip ngrok browser warning
@@ -109,13 +112,18 @@ export const generatePlan = async (
     });
 
     const data = await response.json();
+    console.log("generatePlan - Response status:", response.status);
+    console.log("generatePlan - Response data:", data);
 
     if (!response.ok) {
+      console.error("generatePlan - Request failed:", data.error);
       return { error: data.error || "Plan generation failed" };
     }
 
+    console.log("generatePlan - Success");
     return { data };
   } catch (error) {
+    console.error("generatePlan - Network error:", error);
     return { error: "Network error. Please try again." };
   }
 };
@@ -126,6 +134,14 @@ export const getUserPlan = async (
   token: string | null
 ): Promise<ApiResponse<any>> => {
   try {
+    console.log("getUserPlan - Starting request for user:", userId);
+    console.log("getUserPlan - Token available:", token ? "Yes" : "No");
+
+    if (!token) {
+      console.error("getUserPlan - No token provided");
+      return { error: "Authentication token not available" };
+    }
+
     const response = await fetch(
       `${API_BASE_URL}/plans?user_id=${userId}&latest=true`,
       {
@@ -139,14 +155,18 @@ export const getUserPlan = async (
     );
 
     const data = await response.json();
+    console.log("getUserPlan - Response status:", response.status);
+    console.log("getUserPlan - Response data:", data);
 
     if (!response.ok) {
+      console.error("getUserPlan - Request failed:", data.error);
       return { error: data.error || "Failed to get plan" };
     }
 
+    console.log("getUserPlan - Success");
     return { data };
   } catch (error) {
-    console.error("Get plan error:", error);
+    console.error("getUserPlan - Network error:", error);
     return { error: "Network error. Please try again." };
   }
 };
@@ -238,6 +258,132 @@ export const updateProfile = async (
     return { data };
   } catch (error) {
     console.error("Update profile error:", error);
+    return { error: "Network error. Please try again." };
+  }
+};
+
+// Get User Data Route (from UserRoutes)
+export const getUserData = async (
+  token: string | null
+): Promise<ApiResponse<any>> => {
+  try {
+    console.log("getUserData - Starting request");
+    console.log("getUserData - Token available:", token ? "Yes" : "No");
+
+    if (!token) {
+      console.error("getUserData - No token provided");
+      return { error: "Authentication token not available" };
+    }
+
+    const response = await fetch(`${API_BASE_URL}/user`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
+
+    const data = await response.json();
+    console.log("getUserData - Response status:", response.status);
+    console.log("getUserData - Response data:", data);
+
+    if (!response.ok) {
+      console.error("getUserData - Request failed:", data.error);
+      return { error: data.error || "Failed to get user data" };
+    }
+
+    console.log("getUserData - Success");
+    return { data };
+  } catch (error) {
+    console.error("getUserData - Network error:", error);
+    return { error: "Network error. Please try again." };
+  }
+};
+
+// Get User Data with Profile Route (from UserRoutes)
+export const getUserDataWithProfile = async (
+  token: string | null
+): Promise<ApiResponse<any>> => {
+  try {
+    console.log("getUserDataWithProfile - Starting request");
+    console.log(
+      "getUserDataWithProfile - Token available:",
+      token ? "Yes" : "No"
+    );
+
+    if (!token) {
+      console.error("getUserDataWithProfile - No token provided");
+      return { error: "Authentication token not available" };
+    }
+
+    const response = await fetch(`${API_BASE_URL}/user/profile`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
+
+    const data = await response.json();
+    console.log("getUserDataWithProfile - Response status:", response.status);
+    console.log("getUserDataWithProfile - Response data:", data);
+
+    if (!response.ok) {
+      console.error("getUserDataWithProfile - Request failed:", data.error);
+      return { error: data.error || "Failed to get user data with profile" };
+    }
+
+    console.log("getUserDataWithProfile - Success");
+    return { data };
+  } catch (error) {
+    console.error("getUserDataWithProfile - Network error:", error);
+    return { error: "Network error. Please try again." };
+  }
+};
+
+// Update User Data Route (from UserRoutes)
+export const updateUserData = async (
+  userData: {
+    name?: string;
+    email?: string;
+  },
+  token: string | null
+): Promise<ApiResponse<any>> => {
+  try {
+    console.log("updateUserData - Starting request");
+    console.log("updateUserData - Token available:", token ? "Yes" : "No");
+    console.log("updateUserData - Data:", userData);
+
+    if (!token) {
+      console.error("updateUserData - No token provided");
+      return { error: "Authentication token not available" };
+    }
+
+    const response = await fetch(`${API_BASE_URL}/user`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "ngrok-skip-browser-warning": "true",
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const data = await response.json();
+    console.log("updateUserData - Response status:", response.status);
+    console.log("updateUserData - Response data:", data);
+
+    if (!response.ok) {
+      console.error("updateUserData - Request failed:", data.error);
+      return { error: data.error || "Failed to update user data" };
+    }
+
+    console.log("updateUserData - Success");
+    return { data };
+  } catch (error) {
+    console.error("updateUserData - Network error:", error);
     return { error: "Network error. Please try again." };
   }
 };

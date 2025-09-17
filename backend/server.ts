@@ -11,6 +11,7 @@ import RegisterRoutes from "./routes/registerRoutes";
 import AdminRoutes from "./routes/admin";
 import OnboardingRoutes from "./routes/onboardingRoutes";
 import PlansRoutes from "./routes/PlanRoutes";
+import UserRoutes from "./routes/UserRoutes";
 
 dotenv.config();
 
@@ -64,12 +65,12 @@ const start = async (): Promise<void> => {
     filename: DB_PATH,
     driver: sqlite3.Database,
   });
-
   server.decorate("db", db);
   server.register(RegisterRoutes);
   server.register(AdminRoutes);
   server.register(OnboardingRoutes);
   server.register(PlansRoutes);
+  server.register(UserRoutes);
 
   try {
     await server.listen({ port: Number(PORT), host: "0.0.0.0" });
