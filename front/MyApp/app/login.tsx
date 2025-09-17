@@ -8,20 +8,23 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ImageBackground,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, router } from "expo-router";
 import { loginUser, getUserProfile } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function LoginScreen() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const { setUser, setToken } = useAuth();
+  const [passVisible, setPassVisible] = useState<boolean>(false);
 
   const handleLogin = async () => {
     // Validation
@@ -77,10 +80,12 @@ export default function LoginScreen() {
   };
   return (
     <SafeAreaView className="flex-1">
-      <LinearGradient
-        colors={["#f8f9fa", "#e9ecef", "#dee2e6"]}
-        className="flex-1"
+      <ImageBackground
+        source={require("../assets/images/nutriBack.png")}
+        resizeMode="cover"
+        className="flex-1 relative"
       >
+        <View className="absolute top-0 left-0 right-0 h-full bg-white/90" />
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           className="flex-1"
@@ -89,11 +94,8 @@ export default function LoginScreen() {
             <View className="flex-1 justify-center px-6 py-12">
               {/* Header */}
               <View className="items-center mb-8">
-                <Text className="text-4xl font-bold text-gray-800 mb-2">
-                  Welcome Back
-                </Text>
-                <Text className="text-base text-gray-600 text-center">
-                  Sign in to continue your health journey
+                <Text className="text-4xl font-bold text-gray-800 mb-2 text-center">
+                  Welcome back ! Let’s reach your goals !
                 </Text>
               </View>
               {/* Form */}
@@ -117,7 +119,7 @@ export default function LoginScreen() {
                 </View>
 
                 {/* Password Input */}
-                <View>
+                <View className="relative ">
                   <Text className="text-sm font-medium text-gray-700 mb-2">
                     Password
                   </Text>
@@ -129,8 +131,19 @@ export default function LoginScreen() {
                     onChangeText={(text) =>
                       setFormData({ ...formData, password: text })
                     }
-                    secureTextEntry
+                    // secureTextEntry
+                    secureTextEntry={!passVisible}
                   />
+                  <TouchableOpacity
+                    className="absolute w-5 h-5 right-0 top-9 mr-4 rounded-full items-center justify-center opacity-20"
+                    onPress={() => setPassVisible(!passVisible)}
+                  >
+                    {passVisible ? (
+                      <Ionicons name="eye-off" size={15} color="black" />
+                    ) : (
+                      <Ionicons name="eye" size={15} color="black" />
+                    )}
+                  </TouchableOpacity>
                 </View>
               </View>
               {/* Forgot Password */}
@@ -168,7 +181,7 @@ export default function LoginScreen() {
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
-      </LinearGradient>
+      </ImageBackground>
     </SafeAreaView>
   );
 }

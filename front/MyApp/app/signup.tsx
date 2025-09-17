@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ImageBackground,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -85,10 +86,12 @@ export default function SignUpScreen() {
   };
   return (
     <SafeAreaView className="flex-1">
-      <LinearGradient
-        colors={["#f8f9fa", "#e9ecef", "#dee2e6"]}
-        className="flex-1"
+      <ImageBackground
+        source={require("../assets/images/nutriBack.png")}
+        resizeMode="cover"
+        className="flex-1 relative"
       >
+        <View className="absolute inset-0 bg-white opacity-90" />
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           className="flex-1"
@@ -203,7 +206,7 @@ export default function SignUpScreen() {
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
-      </LinearGradient>
+      </ImageBackground>
     </SafeAreaView>
   );
 }
