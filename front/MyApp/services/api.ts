@@ -1,7 +1,7 @@
 // API service for NutriPlan backend
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_BASE_URL = "https://8bcf4f6c26b0.ngrok-free.app"; // Change this to your backend URL
+const API_BASE_URL = "https://74b7a43f20c0.ngrok-free.app"; // Change this to your backend URL
 
 // Constants for storage keys
 const TOKEN_KEY = "userToken";
@@ -10,7 +10,7 @@ const DUMMY_PROFILE_KEY = "dummyProfile";
 const DUMMY_PLAN_KEY = "dummyPlan";
 
 // Enable dummy mode when backend is not available
-const ENABLE_DUMMY_MODE = true; // Set to false when backend is hosted
+const ENABLE_DUMMY_MODE = false; // Set to false when backend is hosted
 
 // Dummy data for offline testing
 const DUMMY_USER = {
